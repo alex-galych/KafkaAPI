@@ -6,16 +6,12 @@
         "APIt",
         "Kafka"
     ],
-    "homepage": "http://www.swanlinux.net",
-    "require": {
-        "nmred/kafka-php": "0.1.*"
-    },
+    "require": {},
     "config": {
         "use-include-path": true
     },
     "autoload": {
         "psr-0": {
-            "Kafka\\": "vendor/kafka-php/src/",
             "Omg\\": "src/"
         }
     }

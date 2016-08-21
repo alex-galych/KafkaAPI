@@ -10,4 +10,3 @@ Short example of Kafka Producers - Consumers implementation
 * brew install kafka - kafka
 * zkServer start - to load zookeeper
 * brew install php56-kafka
-
