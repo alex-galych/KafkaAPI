@@ -1,0 +1,22 @@
+{
+    "name": "omg/kafka-api",
+    "description": "Kafka API example",
+    "type": "library",
+    "keywords": [
+        "APIt",
+        "Kafka"
+    ],
+    "homepage": "http://www.swanlinux.net",
+    "require": {
+        "nmred/kafka-php": "0.1.*"
+    },
+    "config": {
+        "use-include-path": true
+    },
+    "autoload": {
+        "psr-0": {
+            "Kafka\\": "vendor/kafka-php/src/",
+            "Omg\\": "src/"
+        }
+    }
+}
