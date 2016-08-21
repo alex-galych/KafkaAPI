@@ -2,7 +2,6 @@
 
 namespace Omg\Example1;
 
-use \Kafka\Consumer as KafkaConsumer;
 use Omg\Core\Config\ConfigInterface;
 use Omg\Core\Operation\OperationInterface;
 
@@ -14,7 +13,7 @@ class Consumer implements OperationInterface
 {
 
     /**
-     * @var \Kafka\Consumer
+     * @var \Kafka_SimpleConsumer
      */
     protected $kafkaInstance;
 
@@ -27,9 +26,9 @@ class Consumer implements OperationInterface
      * @var array
      */
     protected $partitions = [
-        ['topic' => 'test', 'partition' => 0],
-        ['topic' => 'test1', 'partition' => 1],
-        ['topic' => 'test2', 'partition' => 0],
+        ['topic' => 'test', 'partition' => 0, 'offset' => 0],
+        ['topic' => 'test1', 'partition' => 1, 'offset' => 0],
+        ['topic' => 'test2', 'partition' => 0, 'offset' => 0],
     ];
 
     /**
@@ -37,12 +36,12 @@ class Consumer implements OperationInterface
      */
     public function __construct(ConfigInterface $config)
     {
-        $this->kafkaInstance = KafkaConsumer::getInstance($config->getHostList(), $config->getTimeout());
-        $this->kafkaInstance->setGroup($this->group);
-
-        foreach($this->partitions as $config) {
-            $this->kafkaInstance->setPartition($config['topic'], $config['partition']);
-        }
+        $this->kafkaInstance = new \Kafka_SimpleConsumer(
+            $config->getHostList(),
+            $config->getKafkaPort(),
+            $config->getTimeout(),
+            1000000
+        );
     }
 
     /**
@@ -50,20 +49,39 @@ class Consumer implements OperationInterface
      */
     public function execute()
     {
-        $result = '';
-        $fetchedData = $this->kafkaInstance->fetch();
-
-        foreach ($fetchedData as $topicName => $topic) {
-            foreach ($topic as $partId => $partition) {
-                var_dump($partition->getHighOffset());
-                foreach ($partition as $message) {
-                    var_dump((string)$message);
-                    $result[] = $message;
+        while(true) {
+            try {
+                foreach($this->partitions as $messageStorage) {
+                    $this->retrieveTopicMessage($messageStorage);
                 }
+            } catch (\Exception $e) {
+                echo sprintf('\nERROR: %s', $e->getMessage());
             }
+
+//            sleep(3);
+        }
+    }
+
+    /**
+     * @param array $messageStorage
+     *
+     * @return void
+     */
+    protected function retrieveTopicMessage(array $messageStorage)
+    {
+        $messageNumber = 0;
+        $fetchRequest = new \Kafka_FetchRequest(
+            $messageStorage['topic'], $messageStorage['partition'], $messageStorage['offset'], 1000000);
+
+        $retrievedMessages = $this->kafkaInstance->fetch($fetchRequest);
+        foreach ($retrievedMessages as $retrievedMessage) {
+            echo sprintf(
+                'Message #%d, offset: %d, payload: %s',
+                $messageNumber++, $messageStorage['offset'], $retrievedMessage->payload()
+            );
         }
 
-        return implode($result);
+        unset($fetchRequest);
     }
 
 }

@@ -2,8 +2,7 @@
 
 namespace Omg\Example1;
 
-use \Kafka\Produce as KafkaProduce;
-use \Omg\Core\Config\ConfigInterface;
+use Omg\Core\Config\ConfigInterface;
 use Omg\Core\Operation\OperationInterface;
 
 /**
@@ -14,7 +13,7 @@ class Producer implements OperationInterface
 {
 
     /**
-     * @var \Kafka\Produce
+     * @var \Kafka_Producer
      */
     protected $kafkaInstance;
 
@@ -22,12 +21,12 @@ class Producer implements OperationInterface
      * @var array
      */
     protected $messages = [
-        array('topic' => 'test', 'partition' => 0, 'load' => 'test message 00'),
-        array('topic' => 'test', 'partition' => 1, 'load' => 'test message 01'),
-        array('topic' => 'test1', 'partition' => 0, 'load' => 'test message 10'),
-        array('topic' => 'test1', 'partition' => 1, 'load' => 'test message 11'),
-        array('topic' => 'test2', 'partition' => 0, 'load' => 'test message 20'),
-        array('topic' => 'test2', 'partition' => 1,'load' => 'test message 21'),
+        array('topic' => 'test', 'partition' => 0, 'payload' => ['test message 00']),
+        array('topic' => 'test', 'partition' => 1, 'payload' => ['test message 01']),
+        array('topic' => 'test1', 'partition' => 0, 'payload' => ['test message 10']),
+        array('topic' => 'test1', 'partition' => 1, 'payload' => ['test message 11']),
+        array('topic' => 'test2', 'partition' => 0, 'payload' => ['test message 20']),
+        array('topic' => 'test2', 'partition' => 1, 'payload' => ['test message 21']),
     ];
 
     /**
@@ -35,7 +34,11 @@ class Producer implements OperationInterface
      */
     public function __construct(ConfigInterface $config)
     {
-        $this->kafkaInstance = KafkaProduce::getInstance($config->getHostList(), $config->getTimeout());
+        $this->kafkaInstance = new \Kafka_Producer(
+            $config->getHostList(),
+            $config->getKafkaPort(),
+            \Kafka_Encoder::COMPRESSION_NONE
+        );
     }
 
     /**
@@ -43,13 +46,13 @@ class Producer implements OperationInterface
      */
     public function execute()
     {
-        $this->kafkaInstance->setRequireAck(-1);
+        $bytes = 0;
 
         foreach ($this->messages as $message) {
-            $this->kafkaInstance->setMessages($message['topic'], $message['partition'], $message['load']);
+            $bytes += $this->kafkaInstance->send($message['payload'], $message['topic'], $message['partition']);
         }
 
-        return $this->kafkaInstance->send();
+        printf("\nSent %d messages (%d bytes)\n\n", count($this->messages), $bytes);
     }
 
 }

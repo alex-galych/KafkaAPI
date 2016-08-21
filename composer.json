@@ -3,14 +3,14 @@
     "description": "Kafka API example",
     "type": "library",
     "keywords": [
-        "APIt",
+        "API",
         "Kafka"
     ],
-    "require": {},
-    "config": {
-        "use-include-path": true
+    "require": {
+        "quipo/kafka-php": "master-dev"
     },
     "autoload": {
+        "classmap": ["vendor/kafka-php/src/lib/"],
         "psr-0": {
             "Omg\\": "src/"
         }

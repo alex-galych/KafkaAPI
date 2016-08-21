@@ -21,6 +21,20 @@ interface ConfigInterface
      *
      * @throws ConfigException
      */
+    public function getKafkaPort();
+
+    /**
+     * @return string
+     *
+     * @throws ConfigException
+     */
+    public function getZookeeperPort();
+
+    /**
+     * @return string
+     *
+     * @throws ConfigException
+     */
     public function getTimeout();
 
 }

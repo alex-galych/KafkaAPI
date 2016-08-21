@@ -1,4 +1,6 @@
 {
-    "hostList": "localhost:2181",
-    "timeout": "3000"
+    "hostList": "localhost",
+    "kafkaPort":9092,
+    "timeout": 3000,
+    "zookeeperPort": 2181
 }

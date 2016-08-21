@@ -13,10 +13,9 @@ class Executor
         foreach ($this->examples as $exampleFactory) {
             /** @var \Omg\Core\Example\ExampleFactoryInterface $example */
             $example = new $exampleFactory();
-//            $example = new Omg\Example1\ExampleFactory();
 
             $example->createProducer()->execute();
-            $example->createConsumer()->execute();
+//            $example->createConsumer()->execute();
         }
     }
 }

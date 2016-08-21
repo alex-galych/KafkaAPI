@@ -13,6 +13,10 @@ class Config implements ConfigInterface
 
     const CONFIG_HOST_LIST_NODE = 'hostList';
 
+    const CONFIG_KAFKA_PORT_NODE = 'kafkaPort';
+
+    const CONFIG_ZOOKEEPER_PORT_NODE = 'zookeeperPort';
+
     const CONFIG_TIMEOUT = 'timeout';
 
     protected $config;
@@ -34,6 +38,26 @@ class Config implements ConfigInterface
     public function getHostList()
     {
         return $this->getConfigValue(static::CONFIG_HOST_LIST_NODE);
+    }
+
+    /**
+     * @return string
+     *
+     * @throws ConfigException
+     */
+    public function getKafkaPort()
+    {
+        return $this->getConfigValue(static::CONFIG_KAFKA_PORT_NODE);
+    }
+
+    /**
+     * @return string
+     *
+     * @throws ConfigException
+     */
+    public function getZookeeperPort()
+    {
+        return $this->getConfigValue(static::CONFIG_ZOOKEEPER_PORT_NODE);
     }
 
     /**
